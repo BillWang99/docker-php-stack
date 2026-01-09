@@ -6,6 +6,11 @@ data/mongodb/*
 !data/mariadb/.gitkeep
 !data/mongodb/.gitkeep
 
+# Laravel 專案（各專案有自己的 git）
+src/*/
+!src/*.php
+!src/*.html
+
 # macOS
 .DS_Store
 .AppleDouble
