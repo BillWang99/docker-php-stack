@@ -43,3 +43,6 @@ yarn-error.log*
 tmp/
 temp/
 *.tmp
+
+# Apache disabled sites（停用的站點配置）
+apache/sites/*.disabled
