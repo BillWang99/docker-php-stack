@@ -46,3 +46,7 @@ temp/
 
 # Apache disabled sites（停用的站點配置）
 apache/sites/*.disabled
+
+# Apache sites 配置（各專案獨立配置，不納入版控）
+apache/sites/*.conf
+!apache/sites/example.conf
