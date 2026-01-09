@@ -590,19 +590,19 @@ $projectCount = count($projects);
             <div class="quick-links">
                 <h3>Quick Links</h3>
                 <div class="links-grid">
-                    <a href="/info.php" class="quick-link">
+                    <a href="/info.php" target="_blank" class="quick-link">
                         <i class="fas fa-info-circle"></i>
                         PHP Info
                     </a>
-                    <a href="/test_mongo.php" class="quick-link">
+                    <a href="/test_mongo.php" target="_blank" class="quick-link">
                         <i class="fas fa-leaf"></i>
                         MongoDB Test
                     </a>
-                    <a href="http://localhost:3306" class="quick-link">
+                    <a href="#" onclick="navigator.clipboard.writeText('localhost:3306'); alert('MariaDB 連線資訊已複製: localhost:3306'); return false;" class="quick-link">
                         <i class="fas fa-database"></i>
                         MariaDB (3306)
                     </a>
-                    <a href="http://localhost:27017" class="quick-link">
+                    <a href="#" onclick="navigator.clipboard.writeText('localhost:27017'); alert('MongoDB 連線資訊已複製: localhost:27017'); return false;" class="quick-link">
                         <i class="fas fa-server"></i>
                         MongoDB (27017)
                     </a>
