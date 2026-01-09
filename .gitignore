@@ -1,0 +1,40 @@
+# 資料庫資料檔案（不應納入版控）
+data/mariadb/*
+data/mongodb/*
+
+# 保留資料夾結構
+!data/mariadb/.gitkeep
+!data/mongodb/.gitkeep
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 備份檔案
+*.backup
+*.bak
+*.old
+
+# 環境變數檔案
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 暫存檔案
+tmp/
+temp/
+*.tmp
