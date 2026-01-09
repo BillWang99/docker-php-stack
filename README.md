@@ -227,9 +227,6 @@ composer create-project laravel/laravel my-new-project
 
 # 離開容器
 exit
-
-# 現在就可以使用工具了
-./artisan.sh my-new-project migrate
 ```
 
 ### 方式 2：複製現有專案
@@ -249,18 +246,105 @@ cp src/my-project/.env.example src/my-project/.env
 ./artisan.sh my-project migrate
 ```
 
+### 方式 3：設定虛擬主機
+
+新增專案後，需要在 Apache 中設定虛擬主機：
+
+**1. 編輯 `apache/vhost.conf`，加入新的 VirtualHost：**
+
+```apache
+<VirtualHost *:80>
+    ServerName my-project.localhost
+    DocumentRoot "/var/www/html/my-project/public"
+    DirectoryIndex index.php
+    
+    <Directory "/var/www/html/my-project/public">
+        AllowOverride All
+        Require all granted
+        Options -Indexes +FollowSymLinks
+        
+        RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^ index.php [L]
+    </Directory>
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:fcgi://php:9000"
+    </FilesMatch>
+
+    ErrorLog /proc/self/fd/2
+    CustomLog /proc/self/fd/1 common
+</VirtualHost>
+```
+
+**2. 在 macOS hosts 檔案中加入域名：**
+
+```bash
+sudo sh -c 'echo "127.0.0.1 my-project.localhost" >> /etc/hosts'
+```
+
+**3. 更新專案的 `.env` 檔案：**
+
+```env
+APP_URL=http://my-project.localhost:8080
+DB_HOST=mariadb
+MONGODB_HOST=mongodb
+```
+
+**4. 重啟 Apache：**
+
+```bash
+docker-compose restart apache
+```
+
+**5. 清除 Laravel 快取：**
+
+```bash
+./artisan.sh my-project config:clear
+```
+
+現在可以透過 http://my-project.localhost:8080 存取新專案！
+
 ## 🌐 存取應用程式
 
-- **Web 應用**: http://localhost:8080
-- **PHP Info**: http://localhost:8080/info.php
-- **Laravel 專案**: http://localhost:8080/oppa_pos/public
+### 預設頁面（專案列表）
+- **主頁**: http://localhost:8080
 
-## ⚠️ 注意事項
+### Laravel 專案（虛擬主機）
+每個專案都有獨立的虛擬主機域名：
 
-1. **資料庫資料不納入版控**：`data/` 目錄已加入 `.gitignore`
-2. **環境變數**：記得複製 `.env.example` 為 `.env` 並設定正確的資料庫連線
-3. **檔案權限**：Laravel 的 `storage/` 和 `bootstrap/cache/` 需要寫入權限
-4. **Composer 依賴**：新專案記得先執行 `composer install`
+- **oppa_pos**: http://oppa-pos.localhost:8080
+- **test-mongo**: http://test-mongo.localhost:8080
+
+### 開啟專案
+在瀏覽器中輸入對應的網址，或使用終端機快速開啟：
+
+```bash
+# 開啟專案列表
+open http://localhost:8080
+
+# 開啟 oppa_pos 專案
+open http://oppa-pos.localhost:8080
+
+# 開啟 test-mongo 專案
+open http://test-mongo.localhost:8080
+```
+
+### 虛擬主機架構
+
+每個 Laravel 專案都有獨立的虛擬主機：
+
+- **oppa-pos.localhost:8080** → `/src/oppa_pos/public`
+- **test-mongo.localhost:8080** → `/src/test-mongo/public`
+- **localhost:8080** → `/src` (專案列表頁面)
+
+### 優勢
+
+1. **完全獨立**：每個專案有自己的域名，互不干擾
+2. **路由正常**：Laravel 路由系統完全正常運作
+3. **URL 簡潔**：不需要子目錄前綴
+4. **易於擴展**：新增專案只需加入 VirtualHost 和 hosts 設定
 
 ## 🐛 常見問題
 
@@ -287,6 +371,28 @@ docker logs mariadb
 DB_HOST=mariadb
 MONGODB_HOST=mongodb
 ```
+
+### 無法存取專案網址
+
+```bash
+# 確認 hosts 檔案已設定
+cat /etc/hosts | grep localhost
+
+# 如果沒有，手動加入
+sudo sh -c 'echo "127.0.0.1 oppa-pos.localhost test-mongo.localhost" >> /etc/hosts'
+
+# 確認 Apache 已重啟
+docker-compose restart apache
+```
+
+## ⚠️ 注意事項
+
+1. **資料庫資料不納入版控**：`data/` 目錄已加入 `.gitignore`
+2. **Laravel 專案不納入版控**：`src/*/` 已加入 `.gitignore`，各專案使用獨立 git
+3. **環境變數**：記得設定正確的 `APP_URL` 和資料庫連線（使用容器名稱）
+4. **檔案權限**：Laravel 的 `storage/` 和 `bootstrap/cache/` 需要寫入權限
+5. **Composer 依賴**：新專案記得先執行 `composer install`
+6. **虛擬主機**：新增專案後必須在 `apache/vhost.conf` 和 `/etc/hosts` 中設定
 
 ### 檔案權限問題
 

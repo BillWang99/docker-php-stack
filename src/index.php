@@ -29,12 +29,16 @@ function scanLaravelProjects($baseDir = '/var/www/html') {
             // 獲取最後修改時間
             $lastModified = filemtime($path . '/composer.json');
             
+            // 將專案名稱轉換為虛擬主機域名
+            $hostname = str_replace('_', '-', $item) . '.localhost:8080';
+            
             $projects[] = [
                 'name' => $item,
                 'path' => $path,
                 'version' => $version,
                 'description' => $description,
-                'url' => '/' . $item . '/',
+                'url' => 'http://' . $hostname,
+                'hostname' => $hostname,
                 'lastModified' => $lastModified
             ];
         }
@@ -531,7 +535,7 @@ $projectCount = count($projects);
                 <!-- Projects Grid -->
                 <div class="projects-grid" id="projectsGrid">
                     <?php foreach ($projects as $project): ?>
-                        <a href="<?= htmlspecialchars($project['url']) ?>" class="project-card" data-name="<?= htmlspecialchars(strtolower($project['name'])) ?>">
+                        <a href="<?= htmlspecialchars($project['url']) ?>" target="_blank" rel="noopener noreferrer" class="project-card" data-name="<?= htmlspecialchars(strtolower($project['name'])) ?>">
                             <div class="project-header">
                                 <div class="project-icon">
                                     <i class="fas fa-cube"></i>
@@ -554,9 +558,11 @@ $projectCount = count($projects);
                                 <div class="project-description"><?= htmlspecialchars($project['description']) ?></div>
                             <?php endif; ?>
                             <div class="project-footer">
-                                <span>Click to open</span>
+                                <span class="project-url" style="font-family: monospace; font-size: 0.85em; color: #667eea;">
+                                    <?= htmlspecialchars($project['hostname']) ?>
+                                </span>
                                 <span class="view-link">
-                                    View <i class="fas fa-arrow-right"></i>
+                                    Open <i class="fas fa-external-link-alt"></i>
                                 </span>
                             </div>
                         </a>
@@ -574,6 +580,9 @@ $projectCount = count($projects);
                     <h3>No Projects Yet</h3>
                     <p>Create your first Laravel project to get started:</p>
                     <code>docker exec -it php composer create-project laravel/laravel project_name</code>
+                    <p style="margin-top: 15px; font-size: 0.9em;">
+                        Then add a VirtualHost in <code>apache/vhost.conf</code> and update <code>/etc/hosts</code>
+                    </p>
                 </div>
             <?php endif; ?>
             
