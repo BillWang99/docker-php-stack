@@ -95,6 +95,47 @@ services:
       - backend
     restart: unless-stopped
 
+  scheduler:
+    build:
+      context: ./php
+    container_name: scheduler
+    command: php /var/www/html/tcm_shop/artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - redis
+      - mariadb
+    networks:
+      - backend
+    restart: unless-stopped
+
+  samba:
+    image: dperson/samba
+    container_name: samba
+    restart: unless-stopped
+    environment:
+      USER: smbuser;smbpass
+    volumes:
+      - ./smb-share:/share
+    command: >
+      -u "smbuser;smbpass"
+      -s "files;/share;yes;no;yes;smbuser"
+      -p
+      -g "smbuser"
+      -S
+    ports:
+      - "127.0.0.1:1445:445"
+    networks:
+      - backend
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    restart: unless-stopped
 networks:
   backend:
     driver: bridge

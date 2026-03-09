@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    smbclient \
     libcurl4-openssl-dev \
     pkg-config \
     libssl-dev \
@@ -68,6 +69,9 @@ ENV COMPOSER_HOME=/tmp
 # 安裝 Laravel Installer
 RUN composer global require laravel/installer
 ENV PATH="${PATH}:/tmp/vendor/bin"
+
+# 複製自定義 PHP 配置
+COPY custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
 
 WORKDIR /var/www/html
 
