@@ -1,10 +1,22 @@
 # 資料庫資料檔案（不應納入版控）
 data/mariadb/*
 data/mongodb/*
+data/postgresql/*
+data/redis/*
 
 # 保留資料夾結構
 !data/mariadb/.gitkeep
 !data/mongodb/.gitkeep
+!data/postgresql/.gitkeep
+!data/redis/.gitkeep
+
+# Qdrant 向量資料庫數據
+qdrant_data/*
+!qdrant_data/.gitkeep
+
+# Samba 共享檔案
+smb-share/*
+!smb-share/.gitkeep
 
 # Laravel 專案（各專案有自己的 git）
 src/*/
@@ -50,3 +62,4 @@ apache/sites/*.disabled
 # Apache sites 配置（各專案獨立配置，不納入版控）
 apache/sites/*.conf
 !apache/sites/example.conf
+apache/sites/README.md
