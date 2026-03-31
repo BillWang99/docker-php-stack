@@ -41,6 +41,21 @@ services:
     networks:
       - backend
 
+  postgresql:
+    image: postgres:16-alpine
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: app_db
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    restart: unless-stopped
+
   mongodb:
     image: mongo:7
     container_name: mongodb
@@ -53,6 +68,7 @@ services:
       - "27017:27017"
     networks:
       - backend
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
