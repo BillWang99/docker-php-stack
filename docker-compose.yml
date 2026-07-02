@@ -125,6 +125,19 @@ services:
       - backend
     restart: unless-stopped
 
+  jh-scheduler:
+    build:
+      context: ./php
+    container_name: jh-scheduler
+    command: php /var/www/html/jh_invoice_center/artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - backend
+    restart: unless-stopped
+
   samba:
     image: dperson/samba
     container_name: samba
