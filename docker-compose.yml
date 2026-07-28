@@ -138,6 +138,20 @@ services:
       - backend
     restart: unless-stopped
 
+  tsl-scheduler:
+    build:
+      context: ./php
+    container_name: tsl-scheduler
+    command: php /var/www/html/tsl_cert/artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - postgresql
+      - redis
+    networks:
+      - backend
+    restart: unless-stopped
+
   samba:
     image: dperson/samba
     container_name: samba

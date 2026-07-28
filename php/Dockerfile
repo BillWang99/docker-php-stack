@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    ffmpeg \
     smbclient \
     libcurl4-openssl-dev \
     pkg-config \
